@@ -1,0 +1,13 @@
+* {
+   margin: 0;
+   padding: 0;
+}
+canvas {
+   opacity: 1;
+   width: 100vw;
+   height: 100vh;
+}
+
+html {
+   overflow-y: hidden;
+}
