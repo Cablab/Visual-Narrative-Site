@@ -7,6 +7,17 @@ var canvas         = document.getElementById('g');
     canvas.height  = $(document).height();
 var ctx            = canvas.getContext('2d');
 
+var birds = [];
+
+var GameState = {
+  STOPPED : 0,
+  RUNNING : 1
+};
+
+var currentGameState = GameState.RUNNING;
+var DEG_TO_RADIANS = Math.PI/180;
+var neighborhoodRadius = 50;
+
 var count = 10;
 var image = new Image();
 var image2 = new Image();
@@ -53,10 +64,25 @@ window.onload = function() {
 
 	document.getElementById("g").onmousemove = mouseMove;
 
-	loop();
+    //Creating birds
+    for (var i = 0; i < 10; i++) {
+      var bird = new Bird(30*i,30*i+200);
+      bird.rotation = 90 * DEG_TO_RADIANS;
+      if (i % 2 == 0) {
+        bird.color = "#ef2864";
+      } else {
+        bird.color = "#56d2ff";
+      }
+      var velocity = new Vector2();
+      velocity.x = 1;
+      bird.velocity = velocity;
+      birds.push(bird);
+    }
 }
 
+window.requestAnimationFrame(loop);
 
+/*
 $('#wrapper').click(function (e) {
 
 	var r = this.getBoundingClientRect(),
@@ -99,20 +125,23 @@ $('#wrapper').click(function (e) {
 		if (imageNum === 9) {
 			forward = false;
 		}
-	}    
+	}
 });
-
+*/
 var ballX = 400;
 var ballY = 400;
 var mouseX = 0;
 var mouseY = 0;
 
-//use `requestAnimationFrame` for the game loop
-//so you stay sync with the browsers rendering
-//makes it a smoother animation
 function loop() {
-	moveBall();
-	requestAnimationFrame(loop);
+
+    updateBirds();
+
+    requestAnimationFrame(loop);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBirds();
+
 }
 
 function mouseMove(evt) {
@@ -136,16 +165,13 @@ function moveBall() {
 	//now move
 	ballX += dx;
 	ballY += dy;
-
-	//ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
 	if (opacity === 1) {
 		ctx.strokeStyle = "black";
 		ctx.stroke(circlePointer);
 		ctx.fillStyle = "white";
 		ctx.fill(circlePointer);
 	}
-	
+
 
 	ctx.beginPath();
 	ctx.arc(ballX, ballY, 40, 0, 2 * Math.PI);
@@ -153,5 +179,104 @@ function moveBall() {
 	ctx.fill();
 	ctx.lineWidth = 5;
 	ctx.strokeStyle = "red";
-	ctx.stroke();
+    ctx.stroke();
 }
+
+function updateBirds() {
+  for (var i = 0; i < birds.length; i++) {
+    var b = birds[i];
+    tagNeighbors(b);
+    b.update();
+  }
+}
+
+function drawBirds () {
+  //Draw birds
+  for (var i = 0; i < birds.length; i++) {
+    var b = birds[i];
+    b.draw();
+  }
+}
+
+//Tags all neighbors of a bird
+function tagNeighbors(bird) {
+  for (var i = 0; i < birds.length; i++) {
+    var other = birds[i];
+    var sqrDist = Math.pow(bird.position.x - other.position.x,2) + Math.pow(bird.position.y - other.position.y, 2);
+    if (birds != other && sqrDist <= neighborhoodRadius * neighborhoodRadius) {
+      other.tag = true;
+    }
+  }
+}
+
+var Vector2 = function() {
+  this.x = 0;
+  this.y = 0;
+  this.GetMagnitude = function () {return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y,2));};
+};
+
+Vector2.prototype.Add = function(other) {
+  this.x += other.x;
+  this.y += other.y;
+};
+
+Vector2.prototype.Normalize = function() {
+  var mag = this.GetMagnitude();
+  this.x = this.x/mag;
+  this.y = this.y/mag;
+};
+
+var Bird = function(x, y) {
+  this.color = "#56d2ff";
+  this.position = new Vector2();
+  this.position.x = x;
+  this.position.y = y;
+  this.velocity = new Vector2();
+  this.rotation = 0;
+  this.tag = false;
+};
+
+Bird.prototype.update = function() {
+  var steeringForce = new Vector2();
+  for (var i=0; i < birds.length; i++) {
+    if (birds[i].tag == true) {
+      //Bird is within neighborhood
+      var toAgent = new Vector2();
+      toAgent.x = this.position.x - birds[i].position.x;
+      toAgent.y = this.position.y - birds[i].position.y;
+      toAgent.Normalize();
+      var temp = new Vector2();
+      temp.x = toAgent.x / toAgent.GetMagnitude();
+      temp.y = toAgent.y / toAgent.GetMagnitude();
+      steeringForce.Add(temp);
+    }
+  }
+
+  //translate steeringForce into world space for velocity
+  //this.velocity.Add(steeringForce);
+
+  this.position.Add(this.velocity);
+};
+
+Bird.prototype.draw = function() {
+  ctx.save();
+  //Move to location
+  ctx.translate(this.position.x, this.position.y);
+  //Rotate to rotation
+  ctx.rotate(this.rotation);
+  //Draw bird shape
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "black";
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(15, 40);
+  ctx.lineTo(0, 35);
+  ctx.lineTo(-15, 40);
+  ctx.lineTo(0, 0);
+  //Fill with bird color
+  ctx.fillStyle = this.color;
+  ctx.fill();
+  ctx.stroke();
+  //Restore coordinate system
+  ctx.restore();
+};
