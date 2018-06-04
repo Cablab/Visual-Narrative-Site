@@ -7,7 +7,6 @@ var canvas         = document.getElementById('g');
     canvas.height  = $(document).height();
 var ctx            = canvas.getContext('2d');
 
-<<<<<<< HEAD
 var birds = [];
 
 var GameState = {
@@ -19,7 +18,6 @@ var currentGameState = GameState.RUNNING;
 var DEG_TO_RADIANS = Math.PI/180;
 var neighborhoodRadius = 50;
 
-=======
 var sounds = {
 	0: new Howl({
 		src: ['sounds/congo.mp3'],
@@ -73,7 +71,6 @@ var sounds = {
 	})
 };
 
->>>>>>> 625125036d82a93442b0877b2e0dd2e15fe01bc7
 var count = 10;
 var image = new Image();
 var image2 = new Image();
@@ -122,8 +119,6 @@ window.onload = function() {
 	ctx.fill(circle);
 
 	document.getElementById("g").onmousemove = mouseMove;
-<<<<<<< HEAD
-
     //Creating birds
     for (var i = 0; i < 10; i++) {
       var bird = new Bird(30*i,30*i+200);
@@ -138,9 +133,6 @@ window.onload = function() {
       bird.velocity = velocity;
       birds.push(bird);
     }
-=======
-	loop();
->>>>>>> 625125036d82a93442b0877b2e0dd2e15fe01bc7
 }
 
 window.requestAnimationFrame(loop);
@@ -161,7 +153,7 @@ $('#wrapper').click(function (e) {
 		sounds[imageNum].fade(1.0, 0.0, 3000);
 
 		img = forward? images[++imageNum] : images[--imageNum];
-		
+
 		setTimeout(function () {
 			sounds[imageNum].play();
 			sounds[imageNum].fade(0.0, 1.0, 3000);
