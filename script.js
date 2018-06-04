@@ -7,6 +7,7 @@ var canvas         = document.getElementById('g');
     canvas.height  = $(document).height();
 var ctx            = canvas.getContext('2d');
 
+<<<<<<< HEAD
 var birds = [];
 
 var GameState = {
@@ -18,6 +19,61 @@ var currentGameState = GameState.RUNNING;
 var DEG_TO_RADIANS = Math.PI/180;
 var neighborhoodRadius = 50;
 
+=======
+var sounds = {
+	0: new Howl({
+		src: ['sounds/congo.mp3'],
+		loop: true,
+		volume: 0.0
+	}),
+	1: new Howl({
+		src: ['sounds/cameroon.mp3'],
+		loop: true,
+		volume: 0.0
+	}),
+	2: new Howl({
+		src: ['sounds/nigeria.mp3'],
+		loop: true,
+		volume: 0.0
+	}),
+	3: new Howl({
+		src: ['sounds/mali.mp3'],
+		loop: true,
+		volume: 0.0
+	}),
+	4: new Howl({
+		src: ['sounds/morocco.mp3'],
+		loop: true,
+		volume: 0.0
+	}),
+	5: new Howl({
+		src: ['sounds/spain.mp3'],
+		loop: true,
+		volume: 0.0
+	}),
+	6: new Howl({
+		src: ['sounds/france.mp3'],
+		loop: true,
+		volume: 0.0
+	}),
+	7: new Howl({
+		src: ['sounds/italy.mp3'],
+		loop: true,
+		volume: 0.0
+	}),
+	8: new Howl({
+		src: ['sounds/czech-republic.mp3'],
+		loop: true,
+		volume: 0.0
+	}),
+	9: new Howl({
+		src: ['sounds/sweden.mp3'],
+		loop: true,
+		volume: 0.0
+	})
+};
+
+>>>>>>> 625125036d82a93442b0877b2e0dd2e15fe01bc7
 var count = 10;
 var image = new Image();
 var image2 = new Image();
@@ -48,10 +104,13 @@ var circlePointer = circle;
 var img = images[0];
 var opacity = 1;
 
+sounds[imageNum].play();
+sounds[imageNum].fade(0.0, 1.0, 5000);
+
 function handleLoad() {
     count--;
     if (count === 0) {
-        ctx.drawImage(image, 0, 0, ctx.canvas.width, ctx.canvas.height);
+		ctx.drawImage(image, 0, 0, ctx.canvas.width, ctx.canvas.height);
     }
 };
 
@@ -63,6 +122,7 @@ window.onload = function() {
 	ctx.fill(circle);
 
 	document.getElementById("g").onmousemove = mouseMove;
+<<<<<<< HEAD
 
     //Creating birds
     for (var i = 0; i < 10; i++) {
@@ -78,6 +138,9 @@ window.onload = function() {
       bird.velocity = velocity;
       birds.push(bird);
     }
+=======
+	loop();
+>>>>>>> 625125036d82a93442b0877b2e0dd2e15fe01bc7
 }
 
 window.requestAnimationFrame(loop);
@@ -95,12 +158,14 @@ $('#wrapper').click(function (e) {
 		if (isBusy) return;
 		isBusy = true;
 
-		if (forward) {
-			img = images[++imageNum];
-		}
-		else {
-			img = images[--imageNum];
-		}
+		sounds[imageNum].fade(1.0, 0.0, 3000);
+
+		img = forward? images[++imageNum] : images[--imageNum];
+		
+		setTimeout(function () {
+			sounds[imageNum].play();
+			sounds[imageNum].fade(0.0, 1.0, 3000);
+		}, 2500);
 
 		(function fadeIn() {
 			ctx.globalAlpha = opacity;
