@@ -6,6 +6,6 @@ Visual Narrative assignment for FA 3600 at the Univserity of Utah
 
 ## To do
 - Change mouse to bird image
-- Change ball to birds in boid simulation
+- Get boid simulation working
 - Cut audio to clips w/o vocals
 - Optional: find better audio clips for some destinations
