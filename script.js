@@ -101,9 +101,6 @@ var circlePointer = circle;
 var img = images[0];
 var opacity = 1;
 
-sounds[imageNum].play();
-sounds[imageNum].fade(0.0, 1.0, 5000);
-
 function handleLoad() {
     count--;
     if (count === 0) {
@@ -337,3 +334,34 @@ Bird.prototype.draw = function() {
   //Restore coordinate system
   ctx.restore();
 };
+
+// document.getElementById("g").addEventListener("click", function() {
+// 	document.getElementById("picture").setAttribute("src", images[++imageNum].src.toString());
+// })
+
+$("#g").click(function() {
+	
+	sounds[imageNum].fade(1.0, 0.0, 2000);
+
+	$("#picture").fadeOut(1500, function() {
+		img = forward ? images[++imageNum] : images[--imageNum];
+		$("#picture").attr("src", img.src.toString());
+		$("#picture").fadeIn(1500);
+		sounds[imageNum].play();
+		sounds[imageNum].fade(0.0, 1.0, 2000);
+		setTimeout(function() {
+			sounds[imageNum - 1].stop();
+		}, 500);
+	});
+
+	if (imageNum === 9) forward = false;
+	if (imageNum === 0) forward = true;
+})
+
+$(document).ready(function() {
+	 setTimeout(function () {
+		sounds[0].play();
+		sounds[0].fade(0.0, 1.0, 2000);
+	 }, 500);
+	$("#picture").attr("src", images[0].src.toString());
+});
