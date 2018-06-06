@@ -27,7 +27,7 @@ var sounds = {
 	1: new Howl({
 		src: ['sounds/cameroon.mp3'],
 		loop: true,
-		volume: 0.0
+		volume: 0.5
 	}),
 	2: new Howl({
 		src: ['sounds/nigeria.mp3'],
@@ -85,7 +85,7 @@ var image10 = new Image();
 
 image.onload = image2.onload = image3.onload = image4.onload = image5.onload = image6.onload = image7.onload = image8.onload = image9.onload = image10.onload = handleLoad;
 var images = [image, image2, image3, image4, image5, image6, image7, image8, image9, image10];
-images[0].src = 'http://golem-images.com/site/wp-content/uploads/2016/02/MALL-OF-MARKET-Ctre-ccl-Brazzaville-VUE-MAIL-CONTAINER-Mdf_FULL.jpg';
+images[0].src = 'https://i.pinimg.com/originals/a2/c7/b2/a2c7b2bdf9c2c33b42e45e5bf7a8bbcd.jpg';
 images[1].src = 'https://upload.wikimedia.org/wikipedia/commons/3/34/Monument_de_la_r%C3%A9unification_Yaound%C3%A9_03.JPG';
 images[2].src = 'https://www.presidential-aviation.com/wp-content/uploads/page/Lagos-Island.jpg';
 images[3].src = 'https://artwolfe.com/wp-content/uploads/2014/11/MALI0711020021.jpg';
@@ -342,15 +342,19 @@ Bird.prototype.draw = function() {
 $("#g").click(function() {
 	
 	sounds[imageNum].fade(1.0, 0.0, 2000);
+	$("*").css("cursor", "url('images/bird-flying-icon.png'), default");
 
 	$("#picture").fadeOut(1500, function() {
 		img = forward ? images[++imageNum] : images[--imageNum];
 		$("#picture").attr("src", img.src.toString());
-		$("#picture").fadeIn(1500);
+		$("#picture").fadeIn(1500, function() {
+			$("*").css("cursor", "pointer");
+		});
 		sounds[imageNum].play();
 		sounds[imageNum].fade(0.0, 1.0, 2000);
 		setTimeout(function() {
-			sounds[imageNum - 1].stop();
+			if (forward) { sounds[imageNum - 1].stop(); }
+			else { sounds[imageNum + 1].stop(); }
 		}, 500);
 	});
 
@@ -359,9 +363,10 @@ $("#g").click(function() {
 })
 
 $(document).ready(function() {
-	 setTimeout(function () {
+	$("#wrapper").fadeIn(2000, function() {
 		sounds[0].play();
 		sounds[0].fade(0.0, 1.0, 2000);
-	 }, 500);
-	$("#picture").attr("src", images[0].src.toString());
+	});
+	
+	$("*").css("cursor", "pointer");
 });
